@@ -1,199 +1,70 @@
-// ==UserScript==
-// @name        Script 6 processos 
-// @namespace   http://tampermonkey.net/
-// @version     1.15
-// @description Script para preencher automaticamente formulários com 6 perfis diferentes usando botões de perfis na lateral da página.
-// @author      João Filipe
-// @match       https://visa.vfsglobal.com/*
-// @grant       none
-// ==/UserScript==
-
-(function () {
-    'use strict';
-
-    // Perfis de preenchimento
-    const perfis = [
-        {
-            nome: "LOURDES",
-            primeiroNome: "LOURDES",
-            ultimoNome: "CAMPOS",
-            dataNascimento: "02/03/1997",
-            numeroPassaporte: "N3313365",
-            dataExpiracaoPassaporte: "28/02/2034",
-            telefone: "941336317",
-            email: "rluxate2@gmail.com",
-            codigoPais: "244",
-            genero: "Male",
-            nacionalidade: "Angola"
-        },
-        {
-            nome: "CAMILO",
-            primeiroNome: "CAMILO",
-            ultimoNome: "PITRA",
-            dataNascimento: "04/10/1975",
-            numeroPassaporte: "N2516344",
-            dataExpiracaoPassaporte: "18/06/2029",
-            telefone: "941336317",
-            email: "rluxate2@gmail.com",
-            codigoPais: "244",
-            genero: "Male",
-            nacionalidade: "Angola"
-        },
-        {
-            nome: "MENAYAME",
-            primeiroNome: "MENAYAME",
-            ultimoNome: "MBALA",
-            dataNascimento: "06/06/1979",
-            numeroPassaporte: "N3245116",
-            dataExpiracaoPassaporte: "29/04/2039",
-            telefone: "9941336317",
-            email: "rluxate2@gmail.com",
-            codigoPais: "244",
-            genero: "Male",
-            nacionalidade: "Angola"
-        },
-        {
-            nome: "VICTOR",
-            primeiroNome: "VICTO",
-            ultimoNome: "MBALA",
-            dataNascimento: "02/11/2014",
-            numeroPassaporte: "N3558908",
-            dataExpiracaoPassaporte: "06/01/2035",
-            telefone: "941336317",
-            email: "rluxate31@gmail.com",
-            codigoPais: "244",
-            genero: "Male",
-            nacionalidade: "Angola"
-        },
-        {
-            nome: "ANTINIO",
-            primeiroNome: "ANTONIO",
-            ultimoNome: "TORRES",
-            dataNascimento: "13/10/1966",
-            numeroPassaporte: "N2645168",
-            dataExpiracaoPassaporte: "21/03/2037",
-            telefone: "941336317",
-            email: "rluxate31@gmail.com",
-            codigoPais: "244",
-            genero: "Female",
-            nacionalidade: "Angola"
-        },
-        {
-            nome: "Brazil",
-            primeiroNome: "CINTIA",
-            ultimoNome: "CONDE",
-            dataNascimento: "30/07/1997",
-            numeroPassaporte: "N3132696",
-            dataExpiracaoPassaporte: "27/09/2033",
-            telefone: "941336317",
-            email: "rluxate31@gmail.com",
-            codigoPais: "244",
-            genero: "Female",
-            nacionalidade: "Angola"
-        }
-    ];
-
-    // Função para preencher o formulário com base no perfil selecionado
-    function preencherFormulario(perfil) {
-        const mapCampos = {
-            primeiroNome: "input[placeholder='Enter your first name']",
-            ultimoNome: "input[placeholder='Please enter last name.']",
-            dataNascimento: "input[placeholder='Please select the date']",
-            numeroPassaporte: "input[placeholder='Enter passport number']",
-            dataExpiracaoPassaporte: "#passportExpirtyDate",
-            codigoPais: "input[placeholder='44']",
-            telefone: "input[placeholder='012345648382']",
-            email: "input[placeholder='Enter Email Address']",
-            genero: "select[name='gender']",
-            nacionalidade: "select[name='nationality']"
-        };
-
-        for (const campo in mapCampos) {
-            const input = document.querySelector(mapCampos[campo]);
-            if (input && perfil[campo]) {
-                if (input.tagName === "SELECT") {
-                    // Preenchendo campos SELECT (gênero e nacionalidade)
-                    const option = Array.from(input.options).find(opt => opt.text.trim() === perfil[campo]);
-                    if (option) {
-                        option.selected = true;
-                        input.dispatchEvent(new Event('change', { bubbles: true }));
-                    }
-                } else {
-                    // Preenchendo campos INPUT
-                    input.value = perfil[campo];
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            }
-        }
-
-        alert(`Campos preenchidos com sucesso para o perfil: ${perfil.nome}!`);
-    }
-
-    // Adicionar barra lateral de perfis
-    function addProfileSidebar() {
-        const sidebar = document.createElement('div');
-        sidebar.id = "profileSidebar";
-        sidebar.style.cssText = `
-            position: fixed;
-            top: 10%;
-            right: 0;
-            z-index: 9999;
-            background: rgba(255, 255, 255, 0.95);
-            width: 200px;
-            padding: 10px;
-            border-radius: 5px 0 0 5px;
-            box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
-            display: none;
-        `;
-        sidebar.innerHTML = `<h3 style="text-align: center;">Escolher Perfil</h3>`;
-        document.body.appendChild(sidebar);
-
-        perfis.forEach((perfil) => {
-            const button = document.createElement('button');
-            button.textContent = perfil.nome;
-            button.style.cssText = `
-                display: block;
-                margin: 5px auto;
-                padding: 8px;
-                width: 90%;
-                background: #0056b3;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            `;
-            button.addEventListener('click', () => preencherFormulario(perfil));
-            sidebar.appendChild(button);
-        });
-    }
-
-    // Adicionar botão flutuante para abrir/fechar a barra lateral
-    function addFloatingButton() {
-        const toggleButton = document.createElement('button');
-        toggleButton.textContent = "Perfis";
-        toggleButton.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 10000;
-            background: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        `;
-        toggleButton.addEventListener('click', () => {
-            const sidebar = document.getElementById("profileSidebar");
-            sidebar.style.display = sidebar.style.display === "none" ? "block" : "none";
-        });
-        document.body.appendChild(toggleButton);
-    }
-
-    // Executar ao carregar a página
-    window.addEventListener('load', () => {
-        addProfileSidebar();
-        addFloatingButton();
-    });
-})();
+### Script Python para Verificar Disponibilidade de Datas
+Salve o código abaixo em um arquivo chamado `vfs_calendar_checker.py`.
+```python
+import requests
+from bs4 import BeautifulSoup
+import logging
+# Configuração do logging
+logging.basicConfig(filename='vfs_errors.log', level=logging.ERROR, 
+                    format='%(asctime)s:%(levelname)s:%(message)s')
+# URL do site da VFS Global para o seu país (substitua pela URL correta)
+url = "https://www.vfsglobal.com/SEU_PAIS/"  # Substitua 'SEU_PAIS' pela parte correta da URL
+def buscar_calendario():
+    try:
+        # Realiza a requisição para o site
+        response = requests.get(url)
+        response.raise_for_status()  # Lança um erro se a requisição falhar
+    except requests.exceptions.HTTPError as http_err:
+        logging.error(f"Erro HTTP: {http_err}")
+        print("Erro ao acessar o site: Erro HTTP.")
+        return []
+    except requests.exceptions.ConnectionError as conn_err:
+        logging.error(f"Erro de Conexão: {conn_err}")
+        print("Erro de conexão ao acessar o site.")
+        return []
+    except requests.exceptions.Timeout as timeout_err:
+        logging.error(f"Erro de Timeout: {timeout_err}")
+        print("O tempo de requisição expirou.")
+        return []
+    except requests.exceptions.RequestException as req_err:
+        logging.error(f"Erro ao acessar o site: {req_err}")
+        print("Erro desconhecido ao acessar o site.")
+        return []
+    try:
+        # Analisa o conteúdo HTML da página
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # Localize a seção do calendário (ajuste conforme necessário)
+        # Exemplo: encontrar uma div com a classe específica
+        calendar_section = soup.find("div", class_="calendar-class")  # Substitua pela classe correta
+        if not calendar_section:
+            logging.warning("Seção do calendário não encontrada.")
+            print("Seção do calendário não encontrada.")
+            return []
+        # Aqui você poderá encontrar os elementos de data
+        dates = calendar_section.find_all("span", class_="date-class")  # Altere conforme necessário
+        available_dates = [date.text for date in dates]
+        if not available_dates:
+            logging.info("Nenhuma data disponível encontrada.")
+            print("Nenhuma data disponível encontrada.")
+        
+        return available_dates
+    except Exception as e:
+        logging.error(f"Ocorreu um erro ao processar o conteúdo: {e}")
+        print("Ocorreu um erro ao processar a página.")
+        return []
+if __name__ == "__main__":
+    print("Buscando datas disponíveis...")
+    datas_disponiveis = buscar_calendario()
+    if datas_disponiveis:
+        print("Datas disponíveis:")
+        for data in datas_disponiveis:
+            print(data)
+    else:
+        print("Nenhuma data disponível encontrada.")
+```
+https://www.vfsglobal.com/co.ao/' `'calendar-class'` e `'date-class'`.`requests` e `beautifulsoup4`
+   ```bash
+   pip install requests beautifulsoup4
+   ```
+   python vfs_calendar_checker.py
+   ```
