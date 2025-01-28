@@ -1,5 +1,3 @@
-### Script Python para Verificar Disponibilidade de Datas
-Salve o código abaixo em um arquivo chamado `vfs_calendar_checker.py`.
 ```python
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +6,7 @@ import logging
 logging.basicConfig(filename='vfs_errors.log', level=logging.ERROR, 
                     format='%(asctime)s:%(levelname)s:%(message)s')
 # URL do site da VFS Global para o seu país (substitua pela URL correta)
-url = "https://www.vfsglobal.com/SEU_PAIS/"  # Substitua 'SEU_PAIS' pela parte correta da URL
+url = "https://www.vfsglobal.com/co.ao/'
 def buscar_calendario():
     try:
         # Realiza a requisição para o site
@@ -31,7 +29,6 @@ def buscar_calendario():
         print("Erro desconhecido ao acessar o site.")
         return []
     try:
-        # Analisa o conteúdo HTML da página
         soup = BeautifulSoup(response.text, 'html.parser')
         # Localize a seção do calendário (ajuste conforme necessário)
         # Exemplo: encontrar uma div com a classe específica
